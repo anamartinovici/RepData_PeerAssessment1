@@ -1,9 +1,14 @@
 
 ### Loading and preprocessing the data ###
 
-steps<-read.csv("activity.csv") #load the data
-byDate<-split(steps$steps, steps$date)      #split by date
-stepsPerDay<-sapply(byDate, sum)            #add steps in intervals
+steps<-read.csv("activity.csv")             #load the data
+
+byDate<-split(steps$steps, steps$date)          #split steps by date
+stepsPerDay<-sapply(byInterval, sum)            #add steps in intervals
+
+byInterval<-split(steps$steps, steps$interval)      #split steps by interval
+
+stepsPerInterval<-sapply(byInterval, mean, na.rm=TRUE)               #average steps in intervals
 
 ### What is mean total number of steps taken per day?###
 
@@ -16,11 +21,20 @@ print(mean)
 median<-median(stepsPerDay, na.rm=TRUE)     #Calculate the median steps
 print(median)
 
+### What is the average daily activity pattern? ###
+
 #Make a time series plot
 
+plot(stepsPerInterval, type='l', xlab="5-minute Interval", ylab="steps", 
+     main="Steps per 5-minute interval across days")
+
 #Which 5 minute interval across days contains max steps
+maxInterval<-subset(stepsPerInterval, stepsPerInterval==max(stepsPerInterval))
+print(names(maxInterval))
 
 #Total number of missing values
+
+### Impute Missing Values ###
 
 #Fill in missing values
 
