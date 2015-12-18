@@ -32,11 +32,17 @@ plot(stepsPerInterval, type='l', xlab="5-minute Interval", ylab="steps",
 maxInterval<-subset(stepsPerInterval, stepsPerInterval==max(stepsPerInterval))
 print(names(maxInterval))
 
-#Total number of missing values
-
 ### Impute Missing Values ###
 
+nrow(subset(steps, is.na(steps))) #Calculate total number of NAs
+
 #Fill in missing values
+impute<-function(x) {
+  if(is.na(steps[x,1])) 
+    if (!is.na(steps[(x+1),1])) steps[x,1]<-steps[(x+1),1]}
+        #else steps[x,1]<-1}
+
+imputedSteps<-sapply(steps, impute)
 
 #Create new dataset with values filled
 
