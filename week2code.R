@@ -4,10 +4,9 @@
 steps<-read.csv("activity.csv")             #load the data
 
 byDate<-split(steps$steps, steps$date)          #split steps by date
-stepsPerDay<-sapply(byInterval, sum, na.rm=TRUE)            #add steps in intervals
+stepsPerDay<-sapply(byDate, sum, na.rm=TRUE)            #add steps in intervals
 
 byInterval<-split(steps$steps, steps$interval)      #split steps by interval
-
 stepsPerInterval<-sapply(byInterval, mean, na.rm=TRUE)               #average steps in intervals
 
 ### What is mean total number of steps taken per day?###
@@ -38,12 +37,18 @@ nrow(subset(steps, is.na(steps))) #Calculate total number of NAs
 
 #Impute missing values
 
-byDate<-split(steps$steps, steps$date)                      #split steps by date
-stepsPerDay<-sapply(byInterval, sum, na.rm=TRUE)            #add steps in intervals
+missing<-is.na(steps$steps) #returns true/false vector
 
+impute<- function(x)
+{
+  if(is.na(steps[x,1])) steps[x,1]<-stepsPerInterval[x]
+}
+
+stepsPerInterval #avg steps per interval
 
 
 #Create new dataset with values filled
+sapply(steps, impute)
 
 #Make a histogram of the total number of steps taken each day and 
   #Calculate and report the mean and median total number of steps taken per day. 
