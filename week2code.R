@@ -4,7 +4,7 @@
 steps<-read.csv("activity.csv")             #load the data
 
 byDate<-split(steps$steps, steps$date)          #split steps by date
-stepsPerDay<-sapply(byInterval, sum)            #add steps in intervals
+stepsPerDay<-sapply(byInterval, sum, na.rm=TRUE)            #add steps in intervals
 
 byInterval<-split(steps$steps, steps$interval)      #split steps by interval
 
@@ -36,13 +36,12 @@ print(names(maxInterval))
 
 nrow(subset(steps, is.na(steps))) #Calculate total number of NAs
 
-#Fill in missing values
-impute<-function(x) {
-  if(is.na(steps[x,1])) 
-    if (!is.na(steps[(x+1),1])) steps[x,1]<-steps[(x+1),1]}
-        #else steps[x,1]<-1}
+#Impute missing values
 
-imputedSteps<-sapply(steps, impute)
+byDate<-split(steps$steps, steps$date)                      #split steps by date
+stepsPerDay<-sapply(byInterval, sum, na.rm=TRUE)            #add steps in intervals
+
+
 
 #Create new dataset with values filled
 
