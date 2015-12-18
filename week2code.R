@@ -1,8 +1,12 @@
 #load the data
 steps<-read.csv("activity.csv")
 
-#Make a histogram of total steps per day
-hist(steps$steps, xlab="Day", main="Steps per day", ylab="Steps")
+### Make a histogram of total steps per day ###
+
+byDate<-split(steps$steps, steps$date)      #split by date
+stepsPerDay<-lapply(byDate, sum)            #add steps in intervals
+hist(stepsPerDay, xlab="Day",               #draw histogram
+     main="Steps per day", ylab="Steps")
 
 #Calculate the mean steps
 mean<-mean(steps$steps, na.rm=TRUE)
