@@ -43,12 +43,19 @@ nrow(subset(steps, is.na(steps))) #Calculate total number of NAs
 #missing<-is.na(steps$steps) #returns true/false vector
 
 impute<-function(dfr){
-  dataNA<-!complete.cases(dfr)
-  completeData=data[datanoNA,]
+     yn<-NULL
+     
+     for (i in dfr){
+          if(is.na(i)) yn<-6000
+          else yn<-i
+          yn<-c(yn,i)
+     }
+     return (yn)
 }
 
 #Create new dataset with values filled
-imputedSteps<- steps#sapply(byInterval, impute)
+imp<- impute(steps$steps) #sapply(byInterval, impute)
+imputedSteps$steps<-imp
 
 #Make a histogram of the total number of steps taken each day 
 
@@ -72,7 +79,7 @@ wkConv <- function(wkday) {
   return (yn)
 }
 
-wkday<-wkConv(wkday)
+wkday<-factor(wkConv(wkday))
 wkSteps<-cbind(steps,wkday)
 
 byWeek<-split(wkSteps,wkSteps[,4])
