@@ -7,7 +7,10 @@ byDate<-split(steps$steps, steps$date)          #split steps by date
 stepsPerDay<-sapply(byDate, sum, na.rm=TRUE)            #add steps in intervals
 
 byInterval<-split(steps$steps, steps$interval)      #split steps by interval
-stepsPerInterval<-sapply(byInterval, mean, na.rm=TRUE)               #average steps in intervals
+stepsPerInterval<-sapply(byInterval, mean, na.rm=TRUE) #average steps in intervals
+
+steps$date<-as.Date(steps$date)
+
 
 ### What is mean total number of steps taken per day?###
 
@@ -37,20 +40,18 @@ nrow(subset(steps, is.na(steps))) #Calculate total number of NAs
 
 #Impute missing values
 
-missing<-is.na(steps$steps) #returns true/false vector
+#missing<-is.na(steps$steps) #returns true/false vector
 
-impute<- function(x)
-{
-  if(is.na(steps[x,1])) steps[x,1]<-stepsPerInterval[x]
+impute<-function(dfr){
+  dataNA<-!complete.cases(dfr)
+  completeData=data[datanoNA,]
 }
 
-stepsPerInterval #avg steps per interval
-
-
 #Create new dataset with values filled
-sapply(steps, impute)
+imputedSteps<- steps#sapply(byInterval, impute)
 
-#Make a histogram of the total number of steps taken each day and 
+#Make a histogram of the total number of steps taken each day 
+
   #Calculate and report the mean and median total number of steps taken per day. 
   #Do these values differ from the estimates from the first part of the assignment? 
   #What is the impact of imputing missing data on the estimates of the total daily number of steps?
@@ -58,4 +59,24 @@ sapply(steps, impute)
 #Create a new factor variable in the dataset with two levels -- "weekday" and "weekend" 
 #indicating whether a given date is a weekday or weekend day.
 
-#Make a panel plot containing time series of 5 min interval and average number of steps taken on weekends and weekdays
+wkday<-sapply(imputedSteps$date, weekdays)
+
+wkConv <- function(wkday) {
+  yn<-NULL
+  for (i in wkday){
+    if(i=="Saturday") i<-"weekend"
+    else if (i=="Sunday") i<-"weekend"
+    else i<-"weekday"
+    yn<-c(yn,i)
+  }
+  return (yn)
+}
+
+wkday<-wkConv(wkday)
+wkSteps<-cbind(steps,wkday)
+
+byWeek<-split(wkSteps,wkSteps[,4])
+data
+plot(byWeek[[1]], type='l')
+#Make a panel plot containing time series of 5 min interval and average number 
+#of steps taken on weekends and weekdays
