@@ -68,7 +68,27 @@ nrow(subset(steps, is.na(steps))) #subset based on NA, count rows in resulting d
 
 ###Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 
+```{r}
+impute<-function(dfr){
+     yn<-NULL
+     x<NULL
+     
+     for (i in dfr$steps){
+          if(is.na(i)) x<-mean(dfr$steps, na.rm=TRUE)
+          else x<-i
+          yn<-c(yn,x)
+     }
+     return (yn)
+}
+```
+
 ###Create a new dataset that is equal to the original dataset but with the missing data filled in.
+
+```{r}
+imp<- impute(steps) 
+imputedSteps<-steps
+imputedSteps$steps<-imp
+```
 
 ###Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
@@ -78,7 +98,36 @@ For this part the weekdays() function may be of some help here. Use the dataset 
 
 ###Create a new factor variable in the dataset with two levels -- "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 
+```{r}
 
+wkConv <- function(wkday) {
+  yn<-NULL
+  for (i in wkday){
+    if(i=="Saturday") i<-"weekend"
+    else if (i=="Sunday") i<-"weekend"
+    else i<-"weekday"
+    yn<-c(yn,i)
+  }
+  return (yn)
+}
+
+wkday<-factor(wkConv(wkday))
+wkSteps<-cbind(steps,wkday)
+```
 
 ###Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). The plot should look something like the following, which was created using simulated data:  
+```{r}
+byWeek<-split(wkSteps,wkSteps$wkday)
 
+wday<-byWeek$weekday
+wdaybyInterval<-split(wday$steps, wday$interval)      #split steps by interval
+wdayPerInterval<-sapply(wdaybyInterval, mean, na.rm=TRUE) #average steps in intervals
+
+wend<-byWeek$weekend
+wendbyInterval<-split(wend$steps, wend$interval)      #split steps by interval
+wendPerInterval<-sapply(wendbyInterval, mean, na.rm=TRUE) #average steps in intervals
+
+par(mfrow=c(1,2))
+plot(wdayPerInterval, main="Weekday", type='l')
+plot(wendPerInterval, main="Weekend", type='l')
+```

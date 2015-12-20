@@ -40,14 +40,12 @@ nrow(subset(steps, is.na(steps))) #Calculate total number of NAs
 
 #Impute missing values
 
-#missing<-is.na(steps$steps) #returns true/false vector
-
 impute<-function(dfr){
      yn<-NULL
      x<NULL
      
      for (i in dfr$steps){
-          if(is.na(i)) x<-mean(dfr$steps, na.rm=TRUE)
+          if(is.na(i)) x<-as.integer(mean(dfr$steps, na.rm=TRUE))
           else x<-i
           yn<-c(yn,x)
      }
@@ -75,9 +73,10 @@ imputedSteps$steps<-imp
 #Create a new factor variable in the dataset with two levels -- "weekday" and "weekend" 
 #indicating whether a given date is a weekday or weekend day.
 
+imputedSteps$date<-as.Date(imputedSteps$date)
 wkday<-sapply(imputedSteps$date, weekdays)
 
-wkConv <- function(wkday) {
+wkdaywkConv <- function(wkday) {
   yn<-NULL
   for (i in wkday){
     if(i=="Saturday") i<-"weekend"
@@ -89,10 +88,21 @@ wkConv <- function(wkday) {
 }
 
 wkday<-factor(wkConv(wkday))
-wkSteps<-cbind(steps,wkday)
+wkSteps<-cbind(imputedSteps,wkday)
 
-byWeek<-split(wkSteps,wkSteps[,4])
-data
-plot(byWeek[[1]], type='l')
 #Make a panel plot containing time series of 5 min interval and average number 
 #of steps taken on weekends and weekdays
+
+byWeek<-split(wkSteps,wkSteps$wkday)
+
+wday<-byWeek$weekday
+wdaybyInterval<-split(wday$steps, wday$interval)      #split steps by interval
+wdayPerInterval<-sapply(wdaybyInterval, mean, na.rm=TRUE) #average steps in intervals
+
+wend<-byWeek$weekend
+wendbyInterval<-split(wend$steps, wend$interval)      #split steps by interval
+wendPerInterval<-sapply(wendbyInterval, mean, na.rm=TRUE) #average steps in intervals
+
+par(mfrow=c(1,2))
+plot(wdayPerInterval, main="Weekday", type='l')
+plot(wendPerInterval, main="Weekend", type='l')
