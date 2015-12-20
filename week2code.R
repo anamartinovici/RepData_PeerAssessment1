@@ -44,17 +44,26 @@ nrow(subset(steps, is.na(steps))) #Calculate total number of NAs
 
 impute<-function(dfr){
      yn<-NULL
+     x<NULL
      
-     for (i in dfr){
-          if(is.na(i)) yn<-6000
-          else yn<-i
-          yn<-c(yn,i)
+     for (i in dfr$steps){
+          if(is.na(i)) x<-mean(dfr$steps, na.rm=TRUE)
+          else x<-i
+          yn<-c(yn,x)
      }
      return (yn)
 }
 
+
+{
+     int<-split(dfr$steps, dfr$interval)
+     int[dfr]
+     x<-mean(, na.rm=TRUE)
+}
+
 #Create new dataset with values filled
-imp<- impute(steps$steps) #sapply(byInterval, impute)
+imp<- impute(steps) 
+imputedSteps<-steps
 imputedSteps$steps<-imp
 
 #Make a histogram of the total number of steps taken each day 
